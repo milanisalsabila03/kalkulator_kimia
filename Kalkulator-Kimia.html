@@ -1,0 +1,921 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chemistry Calculator ♡</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg:#111329;
+  --panel:#1b1d3b;
+  --panel2:#25264b;
+  --text:#f3f0ff;
+  --muted:#aaa9c8;
+  --accent:#a994ff;
+  --accent2:#d0a9ff;
+  --input:#12152e;
+  --border:#37365e;
+  --shadow:rgba(0,0,0,.2);
+}
+
+body.light {
+  --bg:#fff0f6;
+  --panel:#ffffff;
+  --panel2:#ffe5f0;
+  --text:#48334d;
+  --muted:#987c96;
+  --accent:#c17ab5;
+  --accent2:#e5a4c8;
+  --input:#fff7fb;
+  --border:#f2cddd;
+  --shadow:rgba(170,100,145,.12);
+}
+
+* {
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body {
+  font-family:'Poppins',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  transition:.3s;
+}
+
+header {
+  padding:25px 6%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid var(--border);
+}
+
+.logo {
+  font-size:21px;
+  font-weight:700;
+  letter-spacing:.5px;
+}
+
+.logo span { color:var(--accent); }
+
+.theme-btn {
+  border:1px solid var(--border);
+  background:var(--panel);
+  color:var(--text);
+  padding:10px 17px;
+  border-radius:30px;
+  cursor:pointer;
+  font-family:inherit;
+}
+
+.container {
+  max-width:1150px;
+  margin:auto;
+  padding:40px 22px;
+}
+
+.hero {
+  margin-bottom:30px;
+}
+
+.hero h1 {
+  font-size:clamp(26px,4vw,39px);
+  margin-bottom:10px;
+}
+
+.hero h1 span { color:var(--accent); }
+
+.hero p {
+  color:var(--muted);
+  font-size:14px;
+}
+
+.stats {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+  margin-bottom:30px;
+}
+
+.stat {
+  background:var(--panel);
+  padding:18px;
+  border:1px solid var(--border);
+  border-radius:17px;
+}
+
+.stat strong {
+  display:block;
+  font-size:23px;
+  color:var(--accent);
+}
+
+.stat small { color:var(--muted); }
+
+.layout {
+  display:grid;
+  grid-template-columns:240px 1fr;
+  gap:22px;
+  align-items:start;
+}
+
+.sidebar,.calculator {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:20px;
+  box-shadow:0 10px 30px var(--shadow);
+}
+
+.sidebar h3 {
+  font-size:14px;
+  margin-bottom:15px;
+}
+
+.nav-btn {
+  display:block;
+  width:100%;
+  text-align:left;
+  padding:12px;
+  margin-bottom:7px;
+  border:none;
+  border-radius:11px;
+  background:transparent;
+  color:var(--muted);
+  font-family:inherit;
+  cursor:pointer;
+  transition:.2s;
+  font-size:12px;
+}
+
+.nav-btn:hover,.nav-btn.active {
+  background:var(--panel2);
+  color:var(--accent);
+  transform:translateX(3px);
+}
+
+.calculator h2 {
+  font-size:22px;
+  margin-bottom:7px;
+}
+
+.description {
+  color:var(--muted);
+  font-size:12px;
+  margin-bottom:25px;
+}
+
+.calc-panel { display:none; }
+.calc-panel.active { display:block; }
+
+.field {
+  margin-bottom:17px;
+}
+
+.field label {
+  display:block;
+  font-size:12px;
+  margin-bottom:8px;
+  color:var(--muted);
+}
+
+input,select {
+  width:100%;
+  padding:13px;
+  background:var(--input);
+  color:var(--text);
+  border:1px solid var(--border);
+  border-radius:11px;
+  outline:none;
+  font-family:inherit;
+  font-size:13px;
+}
+
+input:focus,select:focus {
+  border-color:var(--accent);
+}
+
+.calculate {
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(120deg,var(--accent),var(--accent2));
+  color:#211633;
+  font-family:inherit;
+  font-weight:700;
+  cursor:pointer;
+  transition:.2s;
+  margin-top:5px;
+}
+
+.calculate:hover {
+  transform:translateY(-2px);
+  filter:brightness(1.07);
+}
+
+.result {
+  margin-top:20px;
+  padding:18px;
+  background:var(--panel2);
+  border:1px solid var(--border);
+  border-radius:14px;
+  display:none;
+  line-height:1.8;
+  font-size:13px;
+  overflow-wrap:anywhere;
+}
+
+.result.show { display:block; }
+
+.result strong {
+  color:var(--accent);
+  font-size:19px;
+}
+
+.formula {
+  font-size:11px;
+  color:var(--muted);
+  margin-top:10px;
+}
+
+footer {
+  text-align:center;
+  padding:35px 15px;
+  color:var(--muted);
+  font-size:11px;
+}
+
+@media(max-width:750px) {
+  .layout { grid-template-columns:1fr; }
+  .sidebar {
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:5px;
+  }
+  .sidebar h3 { grid-column:1/-1; }
+  .nav-btn { margin:0; }
+  .stats { gap:8px; }
+  .stat { padding:12px; }
+  .stat strong { font-size:18px; }
+  header { padding:20px; }
+}
+
+@media(max-width:380px) {
+  .sidebar { grid-template-columns:1fr; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">Chem<span>♡</span>Lab</div>
+  <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">
+    ☀️ Mode Terang
+  </button>
+</header>
+
+<main class="container">
+
+  <section class="hero">
+    <h1>Welcome to <span>Chemistry Lab</span> 🧪</h1>
+    <p>Tempat menghitung, memahami, dan menjelajahi dunia kimia.</p>
+  </section>
+
+  <section class="stats">
+    <div class="stat">
+      <strong>09</strong>
+      <small>Kalkulator</small>
+    </div>
+    <div class="stat">
+      <strong>24/7</strong>
+      <small>Siap digunakan</small>
+    </div>
+    <div class="stat">
+      <strong>♡</strong>
+      <small>Made for learning</small>
+    </div>
+  </section>
+
+  <section class="layout">
+
+    <aside class="sidebar">
+      <h3>✦ MENU KALKULATOR</h3>
+
+      <button class="nav-btn active" onclick="showCalc('ph',this)">01. Kalkulator pH</button>
+      <button class="nav-btn" onclick="showCalc('titrasi',this)">02. Kalkulator Titrasi</button>
+      <button class="nav-btn" onclick="showCalc('buffer',this)">03. Buffer / Penyangga</button>
+      <button class="nav-btn" onclick="showCalc('ksp',this)">04. Hidrolisis & Ksp</button>
+      <button class="nav-btn" onclick="showCalc('molaritas',this)">05. Molaritas</button>
+      <button class="nav-btn" onclick="showCalc('mr',this)">06. Massa Molar / Mr</button>
+      <button class="nav-btn" onclick="showCalc('stoikio',this)">07. Stoikiometri</button>
+      <button class="nav-btn" onclick="showCalc('konversi',this)">08. Konversi Satuan</button>
+      <button class="nav-btn" onclick="showCalc('persen',this)">09. Konsentrasi %</button>
+    </aside>
+
+    <section class="calculator">
+
+      <!-- 1. PH -->
+      <div class="calc-panel active" id="ph">
+        <h2>💧 Kalkulator pH</h2>
+        <p class="description">Menghitung pH asam dan basa kuat.</p>
+
+        <div class="field">
+          <label>Jenis Larutan</label>
+          <select id="phType">
+            <option value="acid">Asam kuat</option>
+            <option value="base">Basa kuat</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Konsentrasi (mol/L)</label>
+          <input type="number" id="phC" placeholder="Contoh: 0.01" min="0" step="any">
+        </div>
+
+        <div class="field">
+          <label>Jumlah ion H⁺ atau OH⁻ per molekul</label>
+          <input type="number" id="phN" value="1" min="0.000001" step="any">
+        </div>
+
+        <button class="calculate" onclick="calcPH()">Hitung pH</button>
+        <div class="result" id="phResult"></div>
+      </div>
+
+      <!-- 2. TITRASI -->
+      <div class="calc-panel" id="titrasi">
+        <h2>⚗️ Kalkulator Titrasi</h2>
+        <p class="description">Menghitung konsentrasi larutan melalui titrasi.</p>
+
+        <div class="field">
+          <label>Molaritas larutan 1 (M)</label>
+          <input type="number" id="tM1" placeholder="Contoh: 0.1" min="0" step="any">
+        </div>
+
+        <div class="field">
+          <label>Volume larutan 1 (mL)</label>
+          <input type="number" id="tV1" placeholder="Contoh: 25" min="0" step="any">
+        </div>
+
+        <div class="field">
+          <label>Koefisien / faktor ekuivalen larutan 1</label>
+          <input type="number" id="tN1" value="1" min="0" step="any">
+        </div>
+
+        <div class="field">
+          <label>Molaritas larutan 2 (M)</label>
+          <input type="number" id="tM2" placeholder="Contoh: 0.1" min="0" step="any">
+        </div>
+
+        <div class="field">
+          <label>Koefisien / faktor ekuivalen larutan 2</label>
+          <input type="number" id="tN2" value="1" min="0" step="any">
+        </div>
+
+        <button class="calculate" onclick="calcTitrasi()">Hitung Volume</button>
+        <div class="result" id="tResult"></div>
+      </div>
+
+      <!-- 3. BUFFER -->
+      <div class="calc-panel" id="buffer">
+        <h2>🌸 Kalkulator Buffer</h2>
+        <p class="description">Persamaan Henderson-Hasselbalch.</p>
+
+        <div class="field">
+          <label>Jenis Buffer</label>
+          <select id="bType">
+            <option value="acid">Buffer asam</option>
+            <option value="base">Buffer basa</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Ka atau Kb</label>
+          <input type="number" id="bK" placeholder="Contoh: 0.00001" min="0" step="any">
+        </div>
+
+        <div class="field">
+          <label>Konsentrasi komponen 1 (M)</label>
+          <input type="number" id="bA" placeholder="Contoh: 0.1" min="0" step="any">
+        </div>
+
+        <div class="field">
+          <label>Konsentrasi komponen 2 (M)</label>
+          <input type="number" id="bB" placeholder="Contoh: 0.2" min="0" step="any">
+        </div>
+
+        <button class="calculate" onclick="calcBuffer()">Hitung Buffer</button>
+        <div class="result" id="bResult"></div>
+      </div>
+
+      <!-- 4. HIDROLISIS DAN KSP -->
+      <div class="calc-panel" id="ksp">
+        <h2>🧬 Hidrolisis & Ksp</h2>
+        <p class="description">Pilih perhitungan hidrolisis atau kelarutan.</p>
+
+        <div class="field">
+          <label>Jenis Perhitungan</label>
+          <select id="kType" onchange="switchKsp()">
+            <option value="hydro">Hidrolisis garam</option>
+            <option value="ksp">Kelarutan (Ksp)</option>
+          </select>
+        </div>
+
+        <div id="hydroFields">
+          <div class="field">
+            <label>Jenis garam</label>
+            <select id="hType">
+              <option value="weakacid">Garam dari asam lemah dan basa kuat</option>
+              <option value="weakbase">Garam dari asam kuat dan basa lemah</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Ka atau Kb</label>
+            <input type="number" id="hK" placeholder="Contoh: 0.00001" min="0" step="any">
+          </div>
+          <div class="field">
+            <label>Konsentrasi garam (M)</label>
+            <input type="number" id="hC" placeholder="Contoh: 0.1" min="0" step="any">
+          </div>
+        </div>
+
+        <div id="kspFields" style="display:none">
+          <div class="field">
+            <label>Nilai Ksp</label>
+            <input type="number" id="kValue" placeholder="Contoh: 1.8e-10" min="0" step="any">
+          </div>
+          <div class="field">
+            <label>Koefisien ion positif (a)</label>
+            <input type="number" id="kA" value="1" min="1" step="1">
+          </div>
+          <div class="field">
+            <label>Koefisien ion negatif (b)</label>
+            <input type="number" id="kB" value="1" min="1" step="1">
+          </div>
+        </div>
+
+        <button class="calculate" onclick="calcKsp()">Hitung</button>
+        <div class="result" id="kResult"></div>
+      </div>
+
+      <!-- 5. MOLARITAS -->
+      <div class="calc-panel" id="molaritas">
+        <h2>🧪 Kalkulator Molaritas</h2>
+        <p class="description">Menghitung molaritas berdasarkan mol dan volume.</p>
+
+        <div class="field">
+          <label>Jumlah mol zat terlarut (mol)</label>
+          <input type="number" id="mMol" placeholder="Contoh: 0.5" min="0" step="any">
+        </div>
+
+        <div class="field">
+          <label>Volume larutan (liter)</label>
+          <input type="number" id="mVol" placeholder="Contoh: 2" min="0" step="any">
+        </div>
+
+        <button class="calculate" onclick="calcMolar()">Hitung Molaritas</button>
+        <div class="result" id="mResult"></div>
+      </div>
+
+      <!-- 6. MR -->
+      <div class="calc-panel" id="mr">
+        <h2>⚖️ Kalkulator Massa Molar</h2>
+        <p class="description">Menghitung Mr berdasarkan rumus kimia.</p>
+
+        <div class="field">
+          <label>Rumus kimia</label>
+          <input type="text" id="mrFormula" placeholder="Contoh: H2O atau Ca(OH)2">
+        </div>
+
+        <p class="formula">
+          Mendukung simbol unsur, angka indeks, dan tanda kurung.
+          Massa atom relatif yang digunakan adalah nilai standar perkiraan.
+        </p>
+
+        <button class="calculate" onclick="calcMR()">Hitung Mr</button>
+        <div class="result" id="mrResult"></div>
+      </div>
+
+      <!-- 7. STOIKIOMETRI -->
+      <div class="calc-panel" id="stoikio">
+        <h2>🔬 Kalkulator Stoikiometri</h2>
+        <p class="description">Menghitung mol zat berdasarkan perbandingan koefisien reaksi setara.</p>
+
+        <div class="field">
+          <label>Koefisien zat yang diketahui</label>
+          <input type="number" id="sA" value="2" min="1" step="1">
+        </div>
+
+        <div class="field">
+          <label>Mol zat yang diketahui</label>
+          <input type="number" id="sMol" placeholder="Contoh: 4" min="0" step="any">
+        </div>
+
+        <div class="field">
+          <label>Koefisien zat yang dicari</label>
+          <input type="number" id="sB" value="1" min="1" step="1">
+        </div>
+
+        <button class="calculate" onclick="calcStoikio()">Hitung Mol</button>
+        <div class="result" id="sResult"></div>
+      </div>
+
+      <!-- 8. KONVERSI -->
+      <div class="calc-panel" id="konversi">
+        <h2>📐 Konversi Satuan Kimia</h2>
+        <p class="description">Mengubah satuan volume, massa, dan jumlah zat.</p>
+
+        <div class="field">
+          <label>Jenis satuan</label>
+          <select id="cType" onchange="updateUnits()">
+            <option value="volume">Volume</option>
+            <option value="mass">Massa</option>
+            <option value="mol">Jumlah zat</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Nilai</label>
+          <input type="number" id="cValue" placeholder="Masukkan angka" step="any">
+        </div>
+
+        <div class="field">
+          <label>Dari</label>
+          <select id="cFrom"></select>
+        </div>
+
+        <div class="field">
+          <label>Menjadi</label>
+          <select id="cTo"></select>
+        </div>
+
+        <button class="calculate" onclick="calcConvert()">Konversi</button>
+        <div class="result" id="cResult"></div>
+      </div>
+
+      <!-- 9. PERSEN -->
+      <div class="calc-panel" id="persen">
+        <h2>🩷 Kalkulator Konsentrasi %</h2>
+        <p class="description">Menghitung konsentrasi persen larutan.</p>
+
+        <div class="field">
+          <label>Jenis konsentrasi</label>
+          <select id="pType">
+            <option value="bb">% massa/massa (% b/b)</option>
+            <option value="bv">% massa/volume (% b/v)</option>
+            <option value="vb">% volume/volume (% v/v)</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Massa zat terlarut (gram) / volume (mL)</label>
+          <input type="number" id="pSolute" placeholder="Contoh: 10" min="0" step="any">
+        </div>
+
+        <div class="field">
+          <label>Massa larutan (gram) / volume larutan (mL)</label>
+          <input type="number" id="pSolution" placeholder="Contoh: 100" min="0" step="any">
+        </div>
+
+        <button class="calculate" onclick="calcPercent()">Hitung Persen</button>
+        <div class="result" id="pResult"></div>
+      </div>
+
+    </section>
+  </section>
+</main>
+
+<footer>
+  Chemistry Lab ♡ <br>
+  Learn Chemistry, Explore More. <br>
+  Made with love by Milanisalsabila-Ellie.
+</footer>
+
+<script>
+
+// NAVIGASI
+function showCalc(id,btn) {
+  document.querySelectorAll('.calc-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// MODE TEMA
+function toggleTheme() {
+  document.body.classList.toggle('light');
+  const light=document.body.classList.contains('light');
+  document.getElementById('themeBtn').textContent=
+    light?'🌙 Mode Gelap':'☀️ Mode Terang';
+  localStorage.setItem('chemTheme',light?'light':'dark');
+}
+
+if(localStorage.getItem('chemTheme')==='light') {
+  document.body.classList.add('light');
+  document.getElementById('themeBtn').textContent='🌙 Mode Gelap';
+}
+
+// UTILITAS
+function val(id) {
+  return Number(document.getElementById(id).value);
+}
+
+function showResult(id,html) {
+  const el=document.getElementById(id);
+  el.innerHTML=html;
+  el.classList.add('show');
+}
+
+function validPositive(...values) {
+  return values.every(v=>Number.isFinite(v)&&v>0);
+}
+
+function fail(id,message='Masukkan nilai yang valid dan lebih besar dari nol.') {
+  showResult(id,'<span style="color:#ff8da5">'+message+'</span>');
+}
+
+// 1. PH
+function calcPH() {
+  let c=val('phC'), n=val('phN');
+  if(!validPositive(c,n)||c*n>1) return fail('phResult');
+
+  let concentration=c*n;
+  let p;
+
+  if(document.getElementById('phType').value==='acid') {
+    p=-Math.log10(concentration);
+  } else {
+    p=14+Math.log10(concentration);
+  }
+
+  showResult('phResult',`
+    Hasil perhitungan:<br>
+    <strong>pH = ${p.toFixed(4)}</strong><br>
+    ${p<7?'Bersifat asam':p>7?'Bersifat basa':'Bersifat netral'}
+    <div class="formula">Asumsi: larutan kuat terionisasi sempurna pada 25°C.</div>
+  `);
+}
+
+// 2. TITRASI
+function calcTitrasi() {
+  let m1=val('tM1'),v1=val('tV1'),n1=val('tN1');
+  let m2=val('tM2'),n2=val('tN2');
+
+  if(!validPositive(m1,v1,n1,m2,n2)) return fail('tResult');
+
+  let v2=(m1*v1*n1)/(m2*n2);
+
+  showResult('tResult',`
+    Volume larutan 2:<br>
+    <strong>${v2.toFixed(4)} mL</strong>
+    <div class="formula">M₁ × V₁ × n₁ = M₂ × V₂ × n₂</div>
+  `);
+}
+
+// 3. BUFFER
+function calcBuffer() {
+  let k=val('bK'),a=val('bA'),b=val('bB');
+  if(!validPositive(k,a,b)) return fail('bResult');
+
+  let type=document.getElementById('bType').value;
+  let result;
+
+  if(type==='acid') {
+    result=-Math.log10(k)+Math.log10(b/a);
+  } else {
+    let pOH=-Math.log10(k)+Math.log10(b/a);
+    result=14-pOH;
+  }
+
+  showResult('bResult',`
+    Hasil perhitungan:<br>
+    <strong>pH = ${result.toFixed(4)}</strong>
+    <div class="formula">Menggunakan persamaan Henderson-Hasselbalch.</div>
+  `);
+}
+
+// 4. HIDROLISIS / KSP
+function switchKsp() {
+  let type=document.getElementById('kType').value;
+  document.getElementById('hydroFields').style.display=type==='hydro'?'block':'none';
+  document.getElementById('kspFields').style.display=type==='ksp'?'block':'none';
+}
+
+function calcKsp() {
+  if(document.getElementById('kType').value==='hydro') {
+    let k=val('hK'),c=val('hC');
+    if(!validPositive(k,c)||k>1) return fail('kResult');
+
+    let hType=document.getElementById('hType').value;
+    let x=Math.sqrt((1e-14/k)*c);
+
+    if(x>=c) return fail('kResult','Pendekatan hidrolisis tidak valid untuk nilai ini.');
+
+    let result;
+
+    if(hType==='weakacid') {
+      let oh=x;
+      result=14+Math.log10(oh);
+    } else {
+      let h=x;
+      result=-Math.log10(h);
+    }
+
+    showResult('kResult',`
+      <strong>pH = ${result.toFixed(4)}</strong><br>
+      Perkiraan konsentrasi ion = ${x.toExponential(4)} M
+      <div class="formula">Pendekatan hidrolisis garam pada konsentrasi awal, dengan asumsi hidrolisis kecil.</div>
+    `);
+
+  } else {
+    let ksp=val('kValue'),a=val('kA'),b=val('kB');
+
+    if(!validPositive(ksp,a,b)||!Number.isInteger(a)||!Number.isInteger(b))
+      return fail('kResult','Masukkan Ksp dan koefisien ion yang valid.');
+
+    let s=Math.pow(ksp/(Math.pow(a,a)*Math.pow(b,b)),1/(a+b));
+
+    showResult('kResult',`
+      Kelarutan molar:<br>
+      <strong>${s.toExponential(5)} mol/L</strong>
+      <div class="formula">Untuk garam AₐBᵦ dengan Ksp = (a·s)ᵃ(b·s)ᵇ. Asumsi belum ada ion sejenis.</div>
+    `);
+  }
+}
+
+// 5. MOLARITAS
+function calcMolar() {
+  let mol=val('mMol'),vol=val('mVol');
+  if(!validPositive(mol,vol)) return fail('mResult');
+
+  let m=mol/vol;
+
+  showResult('mResult',`
+    Molaritas larutan:<br>
+    <strong>${m.toFixed(5)} M</strong>
+    <div class="formula">M = n / V (volume dalam liter)</div>
+  `);
+}
+
+// 6. MASSA MOLAR / MR
+const atomicMass={
+  H:1.008, He:4.003, Li:6.94, Be:9.012, B:10.81,
+  C:12.011, N:14.007, O:15.999, F:18.998, Ne:20.18,
+  Na:22.99, Mg:24.305, Al:26.982, Si:28.085, P:30.974,
+  S:32.06, Cl:35.45, Ar:39.948, K:39.098, Ca:40.078,
+  Sc:44.956, Ti:47.867, Cr:51.996, Mn:54.938,
+  Fe:55.845, Co:58.933, Ni:58.693, Cu:63.546,
+  Zn:65.38, Br:79.904, Ag:107.868, I:126.904,
+  Ba:137.327, Au:196.967, Hg:200.592, Pb:207.2
+};
+
+function calcMR() {
+  let formula=document.getElementById('mrFormula').value.trim();
+
+  if(!formula) return fail('mrResult','Masukkan rumus kimia terlebih dahulu.');
+
+  let tokens=formula.match(/[A-Z][a-z]?|\d+|[()]/g);
+
+  if(!tokens||tokens.join('')!==formula)
+    return fail('mrResult','Format rumus kimia tidak valid.');
+
+  let i=0;
+
+  function parse() {
+    let total=0;
+
+    while(i<tokens.length&&tokens[i]!==')') {
+      if(tokens[i]==='(') {
+        i++;
+        let group=parse();
+        if(tokens[i]!==')') throw Error();
+        i++;
+        let count=1;
+        if(tokens[i]&&/^\d+$/.test(tokens[i])) count=Number(tokens[i++]);
+        total+=group*count;
+      } else {
+        let symbol=tokens[i++];
+        if(!(symbol in atomicMass)) throw Error();
+        let count=1;
+        if(tokens[i]&&/^\d+$/.test(tokens[i])) count=Number(tokens[i++]);
+        total+=atomicMass[symbol]*count;
+      }
+    }
+    return total;
+  }
+
+  try {
+    let result=parse();
+    if(i!==tokens.length||!Number.isFinite(result)||result<=0) throw Error();
+
+    showResult('mrResult',`
+      Massa molar / Mr:<br>
+      <strong>${result.toFixed(3)} g/mol</strong>
+      <div class="formula">Berdasarkan massa atom relatif unsur yang digunakan.</div>
+    `);
+  } catch(e) {
+    fail('mrResult','Rumus tidak dikenali. Periksa simbol unsur dan tanda kurung.');
+  }
+}
+
+// 7. STOIKIOMETRI
+function calcStoikio() {
+  let a=val('sA'),mol=val('sMol'),b=val('sB');
+
+  if(!validPositive(a,mol,b)) return fail('sResult');
+
+  let result=mol*b/a;
+
+  showResult('sResult',`
+    Jumlah mol zat yang dicari:<br>
+    <strong>${result.toFixed(5)} mol</strong>
+    <div class="formula">n₁ / koefisien₁ = n₂ / koefisien₂</div>
+  `);
+}
+
+// 8. KONVERSI SATUAN
+const units={
+  volume:{
+    'L':1,'mL':0.001,'µL':0.000001,'m³':1000
+  },
+  mass:{
+    'kg':1000,'g':1,'mg':0.001,'µg':0.000001
+  },
+  mol:{
+    'mol':1,'mmol':0.001,'µmol':0.000001,'kmol':1000
+  }
+};
+
+function updateUnits() {
+  let type=document.getElementById('cType').value;
+  let from=document.getElementById('cFrom');
+  let to=document.getElementById('cTo');
+
+  from.innerHTML='';
+  to.innerHTML='';
+
+  Object.keys(units[type]).forEach(u=>{
+    from.add(new Option(u,u));
+    to.add(new Option(u,u));
+  });
+
+  to.selectedIndex=1;
+}
+
+updateUnits();
+
+function calcConvert() {
+  let value=Number(document.getElementById('cValue').value);
+  let type=document.getElementById('cType').value;
+  let from=document.getElementById('cFrom').value;
+  let to=document.getElementById('cTo').value;
+
+  if(!Number.isFinite(value)||value<0)
+    return fail('cResult','Masukkan angka yang valid.');
+
+  let result=value*units[type][from]/units[type][to];
+
+  showResult('cResult',`
+    Hasil konversi:<br>
+    <strong>${result.toLocaleString('id-ID',{maximumSignificantDigits:9})} ${to}</strong>
+    <div class="formula">${value} ${from} = ${result} ${to}</div>
+  `);
+}
+
+// 9. KONSENTRASI PERSEN
+function calcPercent() {
+  let a=val('pSolute'),b=val('pSolution');
+  let type=document.getElementById('pType').value;
+
+  if(!validPositive(a,b)) return fail('pResult');
+  if(type==='bb'&&a>b)
+    return fail('pResult','Massa zat terlarut tidak boleh melebihi massa larutan.');
+
+  if(type==='vb'&&a>b)
+    return fail('pResult','Volume zat terlarut tidak boleh melebihi volume larutan.');
+
+  let result=(a/b)*100;
+
+  showResult('pResult',`
+    Konsentrasi larutan:<br>
+    <strong>${result.toFixed(4)}%</strong>
+    <div class="formula">
+      ${type==='bb'?'% b/b = massa zat terlarut / massa larutan × 100%':
+      type==='bv'?'% b/v = massa zat terlarut (g) / volume larutan (mL) × 100%':
+      '% v/v = volume zat terlarut / volume larutan × 100%'}
+    </div>
+  `);
+}
+
+</script>
+</body>
+</html>
